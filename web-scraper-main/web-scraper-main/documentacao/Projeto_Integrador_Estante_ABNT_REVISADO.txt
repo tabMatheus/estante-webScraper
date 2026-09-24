@@ -1,0 +1,475 @@
+﻿[NOME DA INSTITUIÇÃO]
+
+[NOME DO CURSO]
+
+[NOME DOS INTEGRANTES DO GRUPO]
+
+ESTANTE: PROJETO DE SISTEMA PARA COLETA E EXPLORAÇÃO DE CATÁLOGO DE LIVROS
+
+[CIDADE]
+
+2026
+
+RESUMO
+
+Este projeto apresenta o planejamento, a análise de requisitos e o design do sistema Estante, uma aplicação web local destinada à consulta de livros. Para formar o catálogo de demonstração, o sistema coleta informações do Books to Scrape, site externo criado para exercícios de raspagem de dados. A fonte não pertence ao grupo e é utilizada somente como origem dos registros. O Estante reúne título, preço, moeda, avaliação e página de origem, permitindo pesquisa, filtros, ordenação, paginação, marcação de favoritos e exportação da seleção. O planejamento delimita escopo, recursos, custos, prazo, riscos, viabilidade e método de trabalho. A análise registra stakeholders, regras de negócio, requisitos funcionais e não funcionais, com prioridades e critérios de aceite. O design descreve a arquitetura, o fluxo de dados, a interface e uma estrutura relacional prevista para a evolução do protótipo, que atualmente utiliza arquivo CSV e armazenamento local do navegador. A solução foi considerada viável para fins acadêmicos por empregar tecnologias de código aberto, exigir poucos recursos computacionais e permitir validação incremental. O documento corresponde às etapas iniciais do ciclo de vida de desenvolvimento de software; implantação pública, autenticação e operação em larga escala permanecem fora desta etapa.
+
+Palavras-chave: projeto de sistemas; coleta de dados; catálogo de livros; requisitos de software; arquitetura web.
+
+LISTA DE ABREVIATURAS E SIGLAS
+
+API	Application Programming Interface
+
+CSV	Comma-Separated Values
+
+HTML	HyperText Markup Language
+
+HTTP	Hypertext Transfer Protocol
+
+RF	Requisito funcional
+
+RN	Regra de negócio
+
+RNF	Requisito não funcional
+
+SDLC	Software Development Life Cycle
+
+LISTA DE ILUSTRAÇÕES
+
+Atualize esta lista no Word para exibir as ilustrações e as páginas.
+
+LISTA DE QUADROS
+
+Atualize esta lista no Word para exibir os quadros e as páginas.
+
+SUMÁRIO
+
+O sumário será atualizado automaticamente ao abrir o arquivo no Word.
+
+1 INTRODUÇÃO
+
+Catálogos eletrônicos facilitam o acesso a produtos, mas a consulta se torna menos prática quando os registros estão espalhados por várias páginas e não há instrumentos suficientes de comparação. O projeto Estante trata esse problema em um cenário didático: os dados de um catálogo público de livros são coletados, organizados e apresentados em uma interface única. O usuário pode localizar títulos, combinar filtros, ordenar resultados, consultar informações básicas e manter uma lista de favoritos no navegador.
+
+O trabalho está limitado às etapas iniciais do SDLC: planejamento, análise de requisitos e projeto da solução. O protótipo existente serve como instrumento de validação, mas não encerra o desenvolvimento. Conforme Sommerville (2016), requisitos e decisões de arquitetura precisam permanecer relacionados ao problema que justificou o sistema; por isso, cada funcionalidade descrita neste documento possui uma necessidade identificável e um critério que permite verificar sua entrega.
+
+A coleta utiliza o Books to Scrape (Books to Scrape, [s. d.]), catálogo externo mantido para exercícios de raspagem de dados. O Estante é o sistema desenvolvido pelo grupo; o site citado fornece apenas os dados empregados na demonstração. Como a fonte reúne informações fictícias, não há tratamento de dados pessoais nessa etapa. Ainda assim, o projeto prevê limites de requisição, identificação da origem e validação do conteúdo recebido, medidas necessárias caso a solução seja adaptada a outro catálogo.
+
+1.1 Problema de pesquisa
+
+Como organizar dados de livros obtidos em páginas sucessivas de um catálogo público e apresentá-los em uma interface simples, pesquisável e verificável, sem exigir infraestrutura complexa para a execução acadêmica?
+
+1.2 Objetivo geral
+
+Projetar um sistema capaz de coletar, organizar e disponibilizar informações de livros em uma interface web local, documentando as decisões de planejamento, os requisitos e a arquitetura necessários para orientar as etapas posteriores de desenvolvimento.
+
+1.3 Objetivos específicos
+
+• definir o escopo, as restrições, os recursos, os custos e o prazo do projeto;
+
+• identificar usuários, demais partes interessadas e suas necessidades;
+
+• especificar e priorizar requisitos funcionais e não funcionais;
+
+• descrever regras de negócio e critérios de aceite;
+
+• propor uma arquitetura compatível com o protótipo e com sua evolução;
+
+• modelar a estrutura de dados prevista para uma versão com persistência relacional;
+
+• registrar riscos técnicos, éticos e operacionais da coleta automatizada; e
+
+• apresentar o protótipo de interface utilizado na validação inicial.
+
+1.4 Justificativa
+
+O projeto permite aplicar conceitos de engenharia de software a um problema de tamanho compatível com a disciplina. A separação entre coleta, armazenamento, serviço e interface torna visíveis decisões que normalmente ficam misturadas em exercícios menores. Além do resultado funcional, a documentação produz uma base para continuidade: a equipe poderá substituir o CSV por banco de dados, criar autenticação e ampliar a coleta sem redefinir o propósito do sistema.
+
+1.5 Método de elaboração
+
+A elaboração combinou inspeção do protótipo, observação da fonte de dados e análise das tarefas que o usuário realiza na interface. Os requisitos foram escritos em linguagem verificável e classificados pelo método MoSCoW. O planejamento adotou trabalho incremental em ciclos curtos, com revisão ao fim de cada semana. O documento foi organizado conforme a ABNT NBR 14724:2024; as citações seguem a ABNT NBR 10520:2023 e as referências, a ABNT NBR 6023:2025.
+
+2 PLANEJAMENTO DO PROJETO
+
+2.1 Identificação e visão do produto
+
+O produto desenvolvido pelo grupo recebeu o nome Estante. Trata-se de uma aplicação web executada localmente, com identidade e interface próprias. O catálogo de demonstração é formado por um coletor automatizado que consulta uma fonte externa: as cinco primeiras páginas do Books to Scrape. A versão atual reúne cem registros, cada um com título, preço, avaliação, moeda e página de origem. A proposta de valor é reduzir o esforço de consulta e comparação, mantendo clara a procedência dos dados.
+
+Quadro 1 – Delimitação do escopo
+
+Item | Definição
+Incluído | Coleta de cinco páginas; extração de título, preço, moeda, avaliação e página; arquivo CSV; API local de leitura; pesquisa; filtros; ordenação; paginação; favoritos no navegador; visualização em grade ou lista; detalhes; indicadores; atualização e exportação da seleção.
+Entregas | Documento de projeto, código do coletor, serviço local, interface responsiva, conjunto de dados de demonstração, protótipo visual e instruções de execução.
+Não incluído nesta etapa | Cadastro e autenticação, compras, pagamentos, integração com estoque real, comentários, recomendação algorítmica, aplicativo móvel nativo, hospedagem pública, execução agendada e painel administrativo.
+Restrições | Fonte única e didática; dados em inglês; preços em libra esterlina; dependência da estrutura HTML externa; execução prevista em computador pessoal; ausência de imagens reais no CSV.
+Premissas | A fonte permanece acessível durante a demonstração; o computador possui Python e navegador atual; o uso é acadêmico; os integrantes dispõem de acesso ao repositório do projeto.
+
+Fonte: elaboração própria (2026).
+
+2.2 Stakeholders
+
+Os stakeholders foram definidos pelo vínculo com a avaliação, a construção, o uso ou a manutenção da solução. O levantamento evita concentrar as decisões apenas na perspectiva de quem programa.
+
+Quadro 2 – Stakeholders do projeto
+
+Stakeholder | Interesse | Participação esperada
+Usuário leitor | Encontrar e comparar livros com pouco esforço. | Validar navegação, busca, filtros, favoritos e legibilidade.
+Equipe do projeto | Entregar solução coerente, executável e documentada. | Planejar, desenvolver, testar, registrar decisões e apresentar.
+Professor orientador | Verificar aplicação das etapas do SDLC e qualidade acadêmica. | Revisar escopo, orientar correções e avaliar entregas.
+Instituição de ensino | Assegurar os objetivos formativos e a integridade acadêmica. | Definir critérios, prazos e regras de apresentação.
+Responsável pela fonte | Manter uso compatível com a finalidade do site. | Publicar condições de acesso e estrutura do catálogo.
+Futuro mantenedor | Compreender o código e alterar componentes sem retrabalho excessivo. | Utilizar documentação, padrões e histórico de versões.
+
+Fonte: elaboração própria (2026).
+
+2.3 Recursos e equipe
+
+A equipe será organizada por responsabilidades, sem impedir que uma pessoa desempenhe mais de um papel. Os nomes devem ser incluídos após a definição final do grupo. A distribuição mínima prevê coordenação, análise, desenvolvimento, experiência do usuário, testes e documentação.
+
+• coordenação e priorização: [NOME], responsável por acompanhar o cronograma, organizar a lista de trabalho e representar as necessidades do usuário;
+
+• análise e documentação: [NOME], responsável por requisitos, regras, rastreabilidade e revisão do texto acadêmico;
+
+• coleta e serviço local: [NOME], responsável pelo coletor, validação do CSV e API;
+
+• interface e experiência do usuário: [NOME], responsável pelo protótipo, responsividade e acessibilidade; e
+
+• qualidade e configuração: [NOME], responsável por testes, registro de defeitos, versões e preparação da demonstração.
+
+Se o grupo tiver menos de cinco integrantes, os papéis serão acumulados e registrados na ata de definição da equipe. Nenhuma entrega ficará sob conhecimento exclusivo de uma pessoa: código e documentos passarão por revisão cruzada antes de serem considerados concluídos.
+
+Quadro 3 – Recursos necessários
+
+Categoria | Recurso | Finalidade
+Pessoas | [Integrantes do grupo] e professor orientador | Decisão, construção, revisão e avaliação.
+Equipamentos | Computadores pessoais com acesso à internet | Desenvolvimento, coleta, testes e apresentação.
+Software | Python, Requests, Beautiful Soup, pandas, HTML, CSS, JavaScript, Git e navegador | Coleta, transformação, serviço local, interface e controle de versão.
+Dados | Books to Scrape | Catálogo didático usado como fonte dos registros.
+Comunicação | Reunião semanal e canal do grupo | Acompanhamento de pendências e registro de decisões.
+Documentação | Editor de texto e repositório | Produção do trabalho acadêmico e preservação dos artefatos.
+
+Fonte: elaboração própria (2026).
+
+2.4 Estimativa de custos
+
+A estimativa considera um projeto acadêmico executado com equipamentos já disponíveis. O custo direto é baixo; o principal investimento é o tempo da equipe. Para tornar esse esforço visível, adotou-se valor de referência de R$ 25,00 por hora, usado apenas para planejamento e sem representar contratação real.
+
+Quadro 4 – Estimativa de custos
+
+Item | Quantidade | Valor unitário | Subtotal
+Trabalho da equipe | 120 horas | R$ 25,00/h | R$ 3.000,00
+Ferramentas e bibliotecas | Licenças de código aberto | R$ 0,00 | R$ 0,00
+Hospedagem | Não prevista nesta etapa | R$ 0,00 | R$ 0,00
+Internet e energia | Infraestrutura já disponível | Custo absorvido | R$ 0,00 direto
+Reserva de contingência | 10% do esforço estimado | — | R$ 300,00
+Total de referência | — | — | R$ 3.300,00
+
+Fonte: elaboração própria (2026).
+
+2.5 Cronograma
+
+O cronograma proposto distribui o trabalho em oito semanas. Cada período termina com um artefato verificável, o que facilita a correção de desvios antes da entrega final.
+
+Quadro 5 – Cronograma proposto
+
+Semana | Atividade principal | Resultado esperado
+1 | Definição do problema, objetivos e stakeholders | Termo de abertura e escopo preliminar
+2 | Levantamento e priorização de requisitos | Lista de RF, RNF, RN e histórias de usuário
+3 | Análise de viabilidade, riscos, custos e recursos | Plano de projeto revisado
+4 | Arquitetura, fluxo de dados e modelo relacional | Especificação técnica
+5 | Revisão do coletor e do tratamento de dados | Coleta reproduzível e CSV validado
+6 | Revisão da interface e dos critérios de acessibilidade | Protótipo integrado ao serviço local
+7 | Testes funcionais, ajustes e rastreabilidade | Registro de testes e pendências
+8 | Normalização, revisão textual e apresentação | Documento e demonstração final
+
+Fonte: elaboração própria (2026).
+
+2.6 Análise de viabilidade
+
+Quadro 6 – Análise de viabilidade
+
+Dimensão | Análise | Conclusão
+Técnica | As tecnologias são conhecidas, possuem documentação e funcionam em computadores comuns. O protótipo já confirma a integração básica. | Viável, com risco moderado na dependência do HTML externo.
+Econômica | Não há licença obrigatória nem servidor pago nesta etapa. O custo concentra-se no tempo do grupo. | Viável para contexto acadêmico.
+Operacional | A aplicação abre no navegador e exige poucos passos. A coleta é executada separadamente para evitar atrasos durante a consulta. | Viável, desde que haja instrução de inicialização.
+Temporal | O escopo cabe em oito semanas quando cadastro, hospedagem e compras ficam fora da entrega. | Viável com controle de mudanças.
+Legal e ética | A fonte é destinada a exercícios de scraping e não contém dados pessoais. A origem deve ser indicada e o tráfego mantido limitado. | Viável no uso acadêmico proposto.
+
+Fonte: elaboração própria (2026).
+
+2.7 Metodologia de trabalho
+
+Foi escolhido um processo incremental inspirado em Scrum, adequado ao tamanho do grupo. O trabalho será mantido em uma lista priorizada; a cada semana, a equipe selecionará itens compatíveis com sua capacidade, produzirá um incremento demonstrável e registrará impedimentos. A adaptação não reproduz todos os eventos e papéis de um ambiente empresarial, mas conserva transparência, inspeção e adaptação, princípios descritos por Schwaber e Sutherland (2020).
+
+As decisões serão registradas no repositório. Mudanças que acrescentem autenticação, banco de dados em produção ou nova fonte de coleta passarão por análise de impacto em prazo e testes. A definição de pronto exige código executável, critério de aceite atendido, revisão por outro integrante e documentação atualizada.
+
+2.8 Gestão de riscos
+
+Quadro 7 – Riscos do projeto
+
+Risco | Prob. | Impacto | Resposta planejada
+Alteração da estrutura HTML da fonte | Média | Alto | Isolar seletores, validar campos obrigatórios e manter amostra local para testes.
+Indisponibilidade do site durante a apresentação | Baixa | Médio | Levar o CSV coletado e demonstrar a interface sem nova requisição.
+Registros inválidos ou incompletos | Média | Médio | Validar tipo, faixa e presença antes de gravar e ao servir o CSV.
+Atraso por ampliação de escopo | Alta | Alto | Aplicar prioridades MoSCoW e adiar itens classificados como poderia ter.
+Conflitos ou perda de arquivos | Média | Alto | Usar controle de versão, cópia remota e revisão antes de integrar alterações.
+Diferenças entre navegadores | Baixa | Médio | Testar em Chrome, Edge e Firefox atuais e preservar funções básicas.
+Ausência temporária de integrante | Média | Médio | Compartilhar conhecimento, registrar tarefas e evitar responsabilidade exclusiva.
+Uso inadequado da coleta em outra fonte | Baixa | Alto | Exigir revisão de termos, robots.txt, limites de acesso e finalidade antes da adaptação.
+
+Fonte: elaboração própria (2026).
+
+3 ANÁLISE DE REQUISITOS
+
+3.1 Estratégia de levantamento
+
+O levantamento partiu de três fontes: observação do catálogo de origem, inspeção das funções existentes no protótipo e simulação das tarefas de um leitor. As necessidades foram escritas sem vincular prematuramente a uma solução técnica. Em seguida, foram comparadas com o código para separar o que já existe do que pertence à evolução planejada. A validação com usuários deverá ocorrer por roteiro de tarefas e entrevista breve, com registro das dificuldades observadas.
+
+3.2 Perfis de usuário
+
+O perfil principal é o leitor que deseja explorar títulos sem conhecimento técnico. Ele pode acessar o sistema por computador ou celular, espera retorno rápido e precisa compreender filtros sem treinamento. O perfil secundário é o integrante responsável pela atualização do catálogo, que executa a coleta e verifica mensagens de erro. O mantenedor constitui um terceiro perfil, interessado em estrutura clara, dependências registradas e dados rastreáveis.
+
+3.3 Priorização
+
+A prioridade segue o método MoSCoW: “deve ter” identifica capacidades indispensáveis à entrega; “deveria ter” reúne itens importantes que admitem solução alternativa; “poderia ter” representa melhoria adiável; e “não terá nesta etapa” explicita limites. A classificação reduz ambiguidades quando o prazo exige escolha.
+
+3.4 Requisitos funcionais
+
+Quadro 8 – Requisitos funcionais
+
+ID | Requisito | Prioridade | Situação
+RF01 | Coletar livros das cinco páginas configuradas da fonte. | Deve ter | Implementado
+RF02 | Extrair título, preço, moeda, avaliação e página de origem de cada livro. | Deve ter | Implementado
+RF03 | Gravar os registros em CSV codificado em UTF-8. | Deve ter | Implementado
+RF04 | Disponibilizar os registros por endpoint HTTP local em formato JSON. | Deve ter | Implementado
+RF05 | Pesquisar livros por parte do título, sem diferenciar maiúsculas e minúsculas. | Deve ter | Implementado
+RF06 | Filtrar resultados por avaliação mínima e página de origem. | Deve ter | Implementado
+RF07 | Filtrar por moeda quando houver mais de uma moeda no conjunto. | Deveria ter | Implementado
+RF08 | Ordenar por avaliação, preço crescente, preço decrescente ou título. | Deve ter | Implementado
+RF09 | Paginar os resultados e informar a quantidade encontrada. | Deve ter | Implementado
+RF10 | Permitir visualização em grade ou lista. | Poderia ter | Implementado
+RF11 | Salvar e remover favoritos no navegador do usuário. | Deveria ter | Implementado
+RF12 | Exibir detalhes do livro selecionado. | Deveria ter | Implementado
+RF13 | Calcular total de livros, avaliação média, preço médio e páginas coletadas. | Deveria ter | Implementado
+RF14 | Recarregar o CSV sem reiniciar o serviço local. | Deveria ter | Implementado
+RF15 | Exportar o resultado filtrado em arquivo CSV. | Deveria ter | Implementado
+RF16 | Registrar data, duração e resultado de cada execução da coleta. | Poderia ter | Planejado
+RF17 | Persistir usuários e favoritos em banco de dados. | Não terá nesta etapa | Evolução
+
+Fonte: elaboração própria (2026).
+
+3.5 Requisitos não funcionais
+
+Quadro 9 – Requisitos não funcionais
+
+ID | Requisito mensurável | Prioridade
+RNF01 | A listagem inicial de cem registros deve aparecer em até dois segundos após a resposta local, em computador de referência da equipe. | Deve ter
+RNF02 | A interface deve permanecer utilizável a partir de 320 px de largura, sem rolagem horizontal da página. | Deve ter
+RNF03 | Busca, filtros, paginação e favoritos devem ser operáveis por teclado e possuir nomes acessíveis. | Deve ter
+RNF04 | O serviço deve aceitar somente rotas previstas e retornar erro JSON para recurso inexistente ou dado inválido. | Deve ter
+RNF05 | O leitor do CSV deve rejeitar preço negativo, avaliação fora de 0 a 5, página menor que 1 e campos obrigatórios vazios. | Deve ter
+RNF06 | O servidor local deve escutar apenas em 127.0.0.1 por padrão. | Deve ter
+RNF07 | A coleta deve usar tempo limite de conexão e identificação do agente antes de qualquer implantação fora do laboratório. | Deveria ter
+RNF08 | As dependências devem possuir versões registradas e instrução reproduzível de instalação. | Deve ter
+RNF09 | A interface deve funcionar nas versões atuais de Chrome, Edge e Firefox. | Deveria ter
+RNF10 | O sistema não deve coletar nem registrar dados pessoais de usuários nesta etapa. | Deve ter
+RNF11 | Módulos de coleta, serviço e interface devem permanecer separados em diretórios identificáveis. | Deveria ter
+RNF12 | Uma falha na gravação de favoritos não deve impedir consulta e filtragem do catálogo. | Deveria ter
+
+Fonte: elaboração própria (2026).
+
+3.6 Regras de negócio
+
+Quadro 10 – Regras de negócio
+
+ID | Regra
+RN01 | Cada registro válido deve possuir título não vazio, preço não negativo, moeda, avaliação entre zero e cinco e página de origem maior ou igual a um.
+RN02 | A avaliação apresentada corresponde ao valor fornecido pela fonte, sem conversão ou inferência.
+RN03 | O preço deve conservar valor e moeda da fonte; o sistema não realizará conversão cambial.
+RN04 | Filtros ativos são cumulativos: um livro precisa atender a todos para permanecer no resultado.
+RN05 | A ordenação atua sobre o conjunto já filtrado e não altera o arquivo original.
+RN06 | O favorito é identificado pela combinação de título e página enquanto não houver identificador persistente.
+RN07 | A exportação deve conter somente os registros do resultado filtrado, em sua ordem atual.
+RN08 | Capas exibidas no protótipo são ilustrações tipográficas e não imagens coletadas do catálogo.
+RN09 | Falhas de uma página durante a coleta devem ser informadas; registros das demais páginas podem ser preservados com indicação de coleta parcial.
+
+Fonte: elaboração própria (2026).
+
+3.7 Histórias de usuário e critérios de aceite
+
+Quadro 11 – Histórias de usuário
+
+ID | História | Critério resumido
+HU01 | Como leitor, quero buscar parte de um título para localizar um livro sem percorrer todo o catálogo. | Ao digitar texto, a lista mostra apenas títulos correspondentes e atualiza a contagem.
+HU02 | Como leitor, quero combinar avaliação e página de origem para restringir resultados. | Somente itens que atendem aos dois filtros são exibidos; limpar filtros restaura a coleção.
+HU03 | Como leitor, quero ordenar por preço para comparar alternativas. | Os preços aparecem em ordem crescente ou decrescente, mantendo desempate estável por título.
+HU04 | Como leitor, quero guardar favoritos para consultá-los novamente no mesmo navegador. | O item marcado permanece após recarregar a página e pode ser removido.
+HU05 | Como integrante, quero atualizar a interface após nova coleta sem reiniciar o servidor. | Após substituir o CSV e acionar Atualizar, o conjunto e os indicadores são recalculados.
+HU06 | Como integrante, quero exportar o resultado para conferir os dados fora do sistema. | O arquivo baixado contém cabeçalho, registros filtrados e codificação compatível com planilha.
+
+Fonte: elaboração própria (2026).
+
+3.8 Restrições, dependências e interfaces externas
+
+A coleta depende da disponibilidade e da marcação HTML do Books to Scrape, que atua somente como fonte externa. Requests realiza a comunicação HTTP; Beautiful Soup interpreta o documento; pandas monta e grava o conjunto tabular. O serviço de consulta usa a biblioteca padrão do Python (Python Software Foundation, 2026) e fornece a rota GET /api/books. A interface depende de recursos usuais do navegador, como Fetch API, dialog, localStorage e download de Blob. Não há integração com pagamento, conta de usuário ou outro serviço de catálogo além da fonte de coleta.
+
+4 PROJETO E DESIGN DA SOLUÇÃO
+
+4.1 Visão arquitetural
+
+A arquitetura separa a aquisição dos dados da experiência de consulta. O Books to Scrape permanece fora dos limites do sistema e funciona apenas como origem dos registros. O coletor é executado sob demanda, lê essa fonte e produz o CSV. O servidor local valida o arquivo e o expõe como JSON. O navegador concentra apresentação, filtros, ordenação, paginação, exportação e favoritos. Essa divisão permite usar o Estante com a última coleta disponível mesmo quando a fonte externa está fora do ar.
+
+Figura 1 – Visão arquitetural do sistema Estante
+
+Fonte externa | Coleta e dados | Serviço e apresentação
+Books to Scrape HTML público | main.py → Requests + Beautiful Soup → pandas → data/livros.csv | app.py → GET /api/books → HTML/CSS/JavaScript → usuário
+
+Fonte: elaboração própria (2026).
+
+Quadro 12 – Componentes da arquitetura
+
+Componente | Responsabilidade | Tecnologia atual
+Coletor | Solicitar páginas, localizar cartões de livros, normalizar campos e gerar o arquivo. | Python, Requests, Beautiful Soup e pandas
+Armazenamento intermediário | Preservar uma versão tabular simples e auditável da coleta. | CSV UTF-8
+Serviço local | Validar o CSV, converter registros e atender a interface por HTTP. | http.server e csv da biblioteca padrão
+Interface | Apresentar, pesquisar, filtrar, ordenar, paginar e exportar. | HTML, CSS e JavaScript
+Preferências locais | Guardar favoritos do navegador sem conta de usuário. | localStorage
+Persistência futura | Registrar coletas, livros, ofertas, usuários e favoritos. | Banco de dados relacional a definir
+
+Fonte: elaboração própria (2026).
+
+4.2 Fluxo principal
+
+Figura 2 – Fluxo principal de coleta e consulta
+
+1. Coletar | 2. Transformar | 3. Servir | 4. Consultar
+Solicitar páginas e verificar respostas. | Extrair, tipar, validar e gravar CSV. | Ler CSV e responder JSON. | Renderizar, filtrar e registrar favoritos.
+
+Fonte: elaboração própria (2026).
+
+No fluxo de exceção, uma falha de acesso deve registrar a página afetada e encerrar ou continuar de acordo com a política definida para a execução. Na leitura, arquivo ausente resulta em HTTP 404; estrutura inválida, em HTTP 422; e erro de entrada e saída, em HTTP 500. A interface apresenta a mensagem recebida sem tentar interpretar dados incompletos.
+
+4.3 Estrutura de dados atual
+
+O protótipo utiliza data/livros.csv. As colunas são titulo, preco, rating, moeda e pagina. O arquivo contém cem registros: vinte para cada uma das cinco páginas coletadas. Na amostra de 19 de setembro de 2026, o preço médio é £ 34,56 e a avaliação média é 2,93 de cinco. Esses valores descrevem a amostra e não constituem requisito fixo do sistema.
+
+4.4 Modelo de dados proposto
+
+Para a próxima etapa, propõe-se substituir o CSV como fonte principal por um banco relacional. Livro mantém a identidade bibliográfica; Coleta registra cada execução; Oferta associa o livro às informações observadas em uma coleta; Usuário representa uma conta futura; Favorito relaciona usuário e livro. A separação entre Livro e Oferta preserva o histórico de preço e avaliação sem duplicar a identidade do título.
+
+Quadro 13 – Dicionário de dados proposto
+
+Entidade | Campos principais | Restrições
+LIVRO | id_livro, titulo, url_origem | Chave primária; título obrigatório; URL de origem única quando disponível.
+COLETA | id_coleta, iniciada_em, concluida_em, paginas_processadas, status | Status: iniciada, concluída, parcial ou falha; datas obrigatórias conforme estado.
+OFERTA | id_oferta, id_livro, id_coleta, preco, moeda, avaliacao, pagina_origem | Chaves estrangeiras; preço ≥ 0; moeda ISO 4217; avaliação entre 0 e 5; página ≥ 1.
+USUARIO | id_usuario, nome, email, senha_hash, criado_em | E-mail único; senha nunca armazenada em texto simples.
+FAVORITO | id_usuario, id_livro, criado_em | Chave composta; impede duplicidade do mesmo livro para o usuário.
+
+Fonte: elaboração própria (2026).
+
+4.5 Projeto da interface
+
+A interface adota uma página única com duas áreas principais. A abertura apresenta a identidade do produto e um resumo numérico da coleção. Em seguida, o catálogo reúne busca, filtros, ordenação, alternância de visualização e cartões. Informações secundárias permanecem no diálogo de detalhes, evitando sobrecarregar a listagem. Em telas estreitas, as colunas diminuem e os controles são reorganizados.
+
+Figura 3 – Protótipo da página inicial e do catálogo
+
+Fonte: elaboração própria, com dados de Books to Scrape (2026).
+
+A avaliação inicial de usabilidade será feita com cinco tarefas: localizar um título, exibir somente livros com quatro estrelas ou mais, ordenar pelo menor preço, favoritar um item e exportar o resultado. Serão registrados conclusão, tempo aproximado, erros e comentários. O objetivo não é provar desempenho estatístico, mas descobrir obstáculos antes da implementação seguinte.
+
+4.6 Segurança, privacidade e uso responsável
+
+O servidor permanece vinculado ao endereço de retorno local 127.0.0.1, reduzindo exposição acidental na rede. O serviço aceita apenas rotas conhecidas e valida tipos e faixas dos dados. A interface cria elementos e atribui texto por textContent, diminuindo a possibilidade de interpretar títulos como marcação HTML. Os favoritos ficam no navegador e não contêm dados pessoais.
+
+Antes de usar outra fonte, a equipe deverá verificar autorização, termos de uso, robots.txt, direitos sobre o conteúdo e impacto das requisições. A versão futura deve definir User-Agent, timeout, intervalo entre acessos, repetição limitada e registro de falhas. Se contas forem criadas, o projeto passará por revisão de privacidade e segurança, incluindo base legal, retenção mínima, controle de acesso e proteção de senhas.
+
+4.7 Decisões técnicas e pontos de evolução
+
+O CSV foi mantido por ser legível, fácil de inspecionar e suficiente para cem itens. Essa escolha não atende bem a concorrência, o histórico nem relacionamentos, razão pela qual o modelo relacional está previsto. A API local contém uma única rota porque o protótipo é somente leitura. A adoção futura de banco de dados exigirá endpoints versionados, migrações e testes de integração.
+
+O coletor atual deve receber timeout, sessão HTTP, tratamento por exceção e política explícita para coleta parcial antes de qualquer uso contínuo. Também é recomendável capturar um identificador ou URL do livro para substituir a chave provisória formada por título e página. Essas melhorias foram registradas como evolução, sem ocultar as limitações da versão demonstrada.
+
+5 VALIDAÇÃO DO PROJETO
+
+5.1 Matriz de rastreabilidade
+
+A rastreabilidade relaciona necessidades, requisitos e componentes. Ela permite verificar se uma alteração atinge somente a interface ou também coleta, dados e serviço.
+
+Quadro 14 – Matriz de rastreabilidade
+
+Necessidade | Requisitos | Componente | Verificação
+Reunir dados dispersos | RF01–RF04; RN01–RN03 | Coletor, CSV e API | Executar coleta; conferir 100 registros e tipos.
+Localizar títulos | RF05; RNF01; RNF03 | Interface | Pesquisar termo existente e inexistente.
+Comparar resultados | RF06–RF10; RN04–RN05 | Interface | Combinar filtros e testar cada ordenação.
+Guardar interesse | RF11; RN06; RNF12 | Interface e localStorage | Recarregar página após marcar e remover favorito.
+Consultar contexto | RF12–RF13; RN08 | Interface | Abrir detalhes e conferir indicadores.
+Atualizar e reutilizar | RF14–RF16; RN07; RN09 | API, interface e coletor | Trocar CSV, atualizar e exportar seleção.
+Evoluir persistência | RF17; modelo proposto | Banco futuro | Revisão do esquema e prova de migração na etapa seguinte.
+
+Fonte: elaboração própria (2026).
+
+5.2 Critérios gerais de aceite
+
+Quadro 15 – Critérios gerais de aceite
+
+Código | Critério
+CA01 | A coleta concluída gera CSV com cabeçalho correto e cem registros válidos para a configuração de cinco páginas.
+CA02 | A rota /api/books retorna JSON com livros e data de atualização, sem cache da resposta.
+CA03 | Busca, filtros e ordenação produzem resultado coerente com os dados de origem.
+CA04 | Favoritos persistem no mesmo navegador e uma falha de armazenamento não interrompe a consulta.
+CA05 | Exportação contém exatamente o conjunto filtrado e abre corretamente em editor de planilhas.
+CA06 | A interface permanece funcional em 320 px, 768 px e 1440 px de largura.
+CA07 | Arquivo ausente, coluna ausente e registro inválido geram mensagens compreensíveis.
+CA08 | Outro integrante executa o sistema seguindo somente o README e registra eventuais lacunas.
+
+Fonte: elaboração própria (2026).
+
+5.3 Plano de testes
+
+Os testes unitários devem cobrir conversão de preço, mapeamento de avaliação, validação do CSV e ordenações. Os testes de integração devem executar a leitura de uma amostra controlada e a resposta da API. Na interface, serão verificados fluxos de busca, filtro, favoritos, exportação, diálogo e paginação. Também serão realizados testes manuais de teclado, foco visível, contraste, redimensionamento e mensagens de falha.
+
+A coleta real não será usada como única evidência, pois a alteração do site tornaria o teste instável. Serão mantidas páginas HTML reduzidas como massa de teste. A demonstração final utilizará o CSV previamente gerado; uma nova coleta poderá ser mostrada apenas se houver conexão e disponibilidade da fonte.
+
+6 CONSIDERAÇÕES FINAIS
+
+O projeto Estante definiu uma solução de escopo controlado para coletar e explorar dados de livros. O planejamento estabeleceu recursos, prazo, custo de referência, método e respostas aos riscos. A análise transformou as necessidades dos usuários em requisitos priorizados, regras e critérios verificáveis. O design separou coleta, armazenamento, serviço e interface, além de propor um modelo relacional para a continuidade.
+
+O protótipo confirma a viabilidade da navegação e da integração local, mas possui limites conhecidos: a fonte é única, o CSV não preserva histórico, os favoritos pertencem ao navegador e a coleta ainda precisa de controles para operação recorrente. Essas limitações orientam a próxima etapa do Projeto Integrador. O trabalho seguinte deverá priorizar testes automatizados, persistência em banco, registro das coletas e revisão de segurança antes de discutir autenticação ou implantação pública.
+
+REFERÊNCIAS
+
+ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. ABNT NBR 6023: informação e documentação — referências — elaboração. Rio de Janeiro: ABNT, 2025.
+
+ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. ABNT NBR 6024: informação e documentação — numeração progressiva das seções de um documento — apresentação. Rio de Janeiro: ABNT, 2012.
+
+ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. ABNT NBR 6027: informação e documentação — sumário — apresentação. Rio de Janeiro: ABNT, 2012.
+
+ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. ABNT NBR 10520: informação e documentação — citações em documentos — apresentação. Rio de Janeiro: ABNT, 2023.
+
+ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. ABNT NBR 14724: informação e documentação — trabalhos acadêmicos — apresentação. Rio de Janeiro: ABNT, 2024.
+
+BOOKS TO SCRAPE. [S. l.], [s. d.]. Disponível em: https://books.toscrape.com/. Acesso em: 23 set. 2026.
+
+PYTHON SOFTWARE FOUNDATION. Python 3 documentation. [S. l.], 2026. Disponível em: https://docs.python.org/3/. Acesso em: 23 set. 2026.
+
+SCHWABER, Ken; SUTHERLAND, Jeff. The Scrum Guide: the definitive guide to Scrum: the rules of the game. [S. l.]: Scrum Guides, 2020. Disponível em: https://scrumguides.org/docs/scrumguide/v2020/2020-Scrum-Guide-US.pdf. Acesso em: 23 set. 2026.
+
+SOMMERVILLE, Ian. Software engineering. 10th ed. Boston: Pearson, 2016.
+
+APÊNDICE A – ROTEIRO DE EXECUÇÃO DO PROTÓTIPO
+
+Este roteiro integra o trabalho porque foi elaborado pela equipe para permitir a verificação do protótipo.
+
+1. Abrir um terminal na pasta raiz do projeto.
+
+2. Instalar as dependências registradas em web-scraper/requirements.txt, caso a coleta seja refeita.
+
+3. Executar py -3 web-scraper/main.py para atualizar data/livros.csv.
+
+4. Executar py -3 app.py --open para iniciar o serviço e abrir o navegador.
+
+5. Acessar o endereço informado no terminal; a porta pode mudar se 8000 estiver ocupada.
+
+6. Testar busca, filtros, ordenação, favoritos, visualização, detalhes, atualização e exportação.
+
+7. Pressionar Ctrl+C no terminal para encerrar o serviço.
